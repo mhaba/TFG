@@ -18,12 +18,12 @@ public:
 	ATFGGameModeBase();						//	Constructor
 
 	UFUNCTION(BlueprintCallable)
-		void Connect(FString url);			//	Function to connect to IP
+		void Connect();						//	Function to connect to IP
+	UFUNCTION(BlueprintCallable)
+		FString GetUrl();					//	Get URL to connect to
+	UFUNCTION(BlueprintCallable)
+		void SetUrl(FString mUrl);			//	Set new URL to connect to
 
-	UPROPERTY(BlueprintReadWrite)
 		FString url;						//	Composer IP/url
-	
-	FString GetUrl();
-	void SetUrl(FString mUrl);
 
 };
