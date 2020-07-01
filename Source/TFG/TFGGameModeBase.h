@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Interfaces/IHttpRequest.h"
+
 #include "TFGGameModeBase.generated.h"
 
 /**
@@ -19,11 +21,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Connect();						//	Function to connect to IP
+
 	UFUNCTION(BlueprintCallable)
 		FString GetUrl();					//	Get URL to connect to
 	UFUNCTION(BlueprintCallable)
 		void SetUrl(FString mUrl);			//	Set new URL to connect to
 
 		FString url;						//	Composer IP/url
+
+private:
+	/** Handles image requests coming from the web */
+	void HandleRequest(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 
 };
