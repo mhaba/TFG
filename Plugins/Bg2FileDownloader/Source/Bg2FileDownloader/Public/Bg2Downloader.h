@@ -8,10 +8,13 @@
 
 #include "Bg2Downloader.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class BG2FILEDOWNLOADER_API UBg2Downloader : public UObject
 {
 	GENERATED_BODY()
+
+public:
+	bool* bAndroidReady;
 
 public:
 	/**
@@ -22,10 +25,14 @@ public:
 	* @return			Returns itself.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
-		static UBg2Downloader* Download(FString URL);
+	static UBg2Downloader* Download(FString URL);
 
 	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
-		FString GetDownloadPath();
+	static FString GetDownloadPath();
+
+	/** Checks if Android device is ready to work with */
+	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
+	static bool CheckAndroidReadiness();
 
 
 private:
@@ -37,9 +44,9 @@ private:
 	/** Shows download progress */
 	void OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved);
 
-	void SetDownloadPath(FString DownloadPath);
+	void AndroidReadiness();
 
-	/** Process the JSON file that indicates the needed files to download */
-	FString JSONParser(FString JSONFilePath);
+
+	void SetDownloadPath(FString DownloadPath);
 
 };

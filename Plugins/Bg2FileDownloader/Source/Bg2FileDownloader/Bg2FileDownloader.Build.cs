@@ -33,7 +33,8 @@ public class Bg2FileDownloader : ModuleRules
 				"SlateCore",
 				"HTTP",
 				"Json",
-				"JsonUtilities"
+				"JsonUtilities",
+				"AndroidPermission"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

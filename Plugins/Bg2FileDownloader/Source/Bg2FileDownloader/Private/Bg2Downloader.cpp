@@ -8,6 +8,9 @@
 #include "HttpModule.h"
 #include "HAL/PlatformFilemanager.h"
 #include "HAL/FileManager.h"
+#include "AndroidPermissionFunctionLibrary.h"
+#include "AndroidPermissionCallbackProxy.h"
+
 
 FString mDownloadPath = "Path";
 FString mBg2Thing = "FirstThing";
@@ -38,49 +41,108 @@ void UBg2Downloader::Start(FString URL) {
 }
 
 void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccess) {
-	//	TODO:	PROCESAR UN JSON TAMBIÉN -> JSONParser
 
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
-		IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
-		IFileManager* FileManager = &IFileManager::Get();
+		if (CheckAndroidReadiness()) {
+			IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+			IFileManager* FileManager = &IFileManager::Get();
 
-		//	Create save directory path
-		FString savePath = FPaths::ProjectSavedDir();
-		SetDownloadPath(savePath);
+			//	Create save directory path
+			FString savePath = FPaths::ProjectSavedDir();
+			SetDownloadPath(savePath);
 
-		FString filename = savePath;
-		if (mBg2Thing.Equals("FirstThing")) {
-			filename += FString("Test.txt");
-		}
-		else {
-			filename += mBg2Thing;
-		}
+			FString filename = savePath;
+			if (mBg2Thing.Equals("FirstThing")) {
+				filename += FString("Test.txt");
+			}
+			else {
+				filename += mBg2Thing;
+			}
 
-		if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
-			//	Create directory
-			PlatformFile.CreateDirectoryTree(*savePath);
-		}
-		
-		//	Create the file
-		IFileHandle* fileHandler = PlatformFile.OpenWrite(*filename);
-		if (fileHandler) {
-			//	Write the new file from the response
-			fileHandler->Write(Response->GetContent().GetData(), Response->GetContentLength());
-			//	Close and finish rhe operation
-			delete fileHandler;
+			if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
+				//	Create directory
+				PlatformFile.CreateDirectoryTree(*savePath);
+			}
+
+			//	Create the file
+			IFileHandle* fileHandler = PlatformFile.OpenWrite(*filename);
+			if (fileHandler) {
+				//	Write the new file from the response
+				fileHandler->Write(Response->GetContent().GetData(), Response->GetContentLength());
+				//	Close and finish rhe operation
+				delete fileHandler;
+			}
 		}
 
 	}
 }
+
+
 
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)
 {
 	//	TODO:	USARLO EN UNA BARRA DE CARGA ?
 	int32 size = HttpRequest->GetContentLength();
 }
+
+
+void UBg2Downloader::AndroidReadiness() {
+	/*bool bIsReady = false;
+	TArray<FString> mAndroidPermArr;
+	mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
+
+	//bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
+	bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(mAndroidPermArr[0]);
+
+	if (!bIsReady) {
+		UAndroidPermissionCallbackProxy* mCallback = UAndroidPermissionFunctionLibrary::AcquirePermissions(mAndroidPermArr);
+		
+		mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
+			if (GrantResults.Num() > 0) {
+				if (GrantResults[0]) {
+					*UBg2Downloader::bAndroidReady = true;
+				}
+			}
+		});
+	}*/
+
+	if (mBg2Thing.Equals("FirstThing")) {
+		*UBg2Downloader::bAndroidReady = false;
+	}
+
+	if (!*UBg2Downloader::bAndroidReady) {
+		TArray<FString> mAndroidPermArr;
+		mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
+
+		*UBg2Downloader::bAndroidReady = UAndroidPermissionFunctionLibrary::CheckPermission(mAndroidPermArr[0]);
+		if (!*UBg2Downloader::bAndroidReady) {
+			UAndroidPermissionCallbackProxy* mCallback = UAndroidPermissionFunctionLibrary::AcquirePermissions(mAndroidPermArr);
+
+			mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
+				if (GrantResults.Num() > 0) {
+					if (GrantResults[0]) {
+						*UBg2Downloader::bAndroidReady = true;
+					}
+					else {
+						*UBg2Downloader::bAndroidReady = false;
+					}
+				}
+				});
+		}
+
+	}
+
+}
+
+bool UBg2Downloader::CheckAndroidReadiness() {
+	UBg2Downloader bg2dwn;
+	bg2dwn.AndroidReadiness();					//	We are in a static function, we must access this way.
+	return *bg2dwn.bAndroidReady;				//	""
+}
+
 
 void UBg2Downloader::SetDownloadPath(FString DownloadPath)
 {
@@ -92,14 +154,4 @@ FString UBg2Downloader::GetDownloadPath() {
 		return FPaths::ProjectSavedDir();	//	Default
 	}
 	return mDownloadPath;
-}
-
-FString UBg2Downloader::JSONParser(FString JSONFilePath)
-{
-	//	TODO:	COMENZAR A PARSEAR EL JSON, DEVOLVER NOMBRE DEL FICHERO A DESCARGAR
-	FString mFilename = "";
-
-	JSONFilePath;
-
-	return mFilename;
 }
