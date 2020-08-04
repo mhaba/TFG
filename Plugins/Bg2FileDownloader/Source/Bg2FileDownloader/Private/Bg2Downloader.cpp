@@ -11,6 +11,8 @@
 #include "AndroidPermissionFunctionLibrary.h"
 #include "AndroidPermissionCallbackProxy.h"
 
+#include "Bg2DownloadParser.h"
+
 
 FString mDownloadPath = "Path";
 FString mBg2Thing = "FirstThing";

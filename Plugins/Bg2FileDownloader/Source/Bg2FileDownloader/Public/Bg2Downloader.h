@@ -6,8 +6,6 @@
 #include "UObject/NoExportTypes.h"
 #include "Interfaces/IHttpRequest.h"
 
-#include "Bg2DownloadParser.h"
-
 #include "Bg2Downloader.generated.h"
 
 UCLASS(Blueprintable)

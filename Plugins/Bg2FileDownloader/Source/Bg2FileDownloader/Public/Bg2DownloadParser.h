@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+
 #include "Bg2DownloadParser.generated.h"
 
 /**
@@ -13,5 +14,18 @@ UCLASS()
 class BG2FILEDOWNLOADER_API UBg2DownloadParser : public UObject
 {
 	GENERATED_BODY()
+	
+
+public:
+	bool IndexParser();
+
+	bool SceneParser();
+
+	bool ModelParser();
+
+	bool MaterialParser();
+	
+private:
+
 	
 };

@@ -34,7 +34,8 @@ public class Bg2FileDownloader : ModuleRules
 				"HTTP",
 				"Json",
 				"JsonUtilities",
-				"AndroidPermission"
+				"AndroidPermission",
+				"Bg2UnrealTools"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
