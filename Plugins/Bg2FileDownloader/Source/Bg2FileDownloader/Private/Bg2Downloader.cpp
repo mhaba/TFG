@@ -80,7 +80,9 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 				delete fileHandler;
 			}
 		//}
-
+			/*FString asdurl = "";
+			FJsonSerializableArray;
+			UBg2DownloadParser::SceneParser()*/
 	}
 }
 

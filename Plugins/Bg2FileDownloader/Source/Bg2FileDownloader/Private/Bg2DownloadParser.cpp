@@ -8,34 +8,34 @@
 #include "..\..\..\..\Bg2UnrealTools\Source\Bg2UnrealTools\Public\Bg2Material.h"
 
 
-bool UBg2DownloadParser::IndexParser(FString& IndexPath, TArray<FString>& Result) {
+/*bool UBg2DownloadParser::IndexParser(const FString& IndexPath, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
 
 
 	return bIsParsed;
-}
+}*/
 
-bool UBg2DownloadParser::SceneParser(FString& ScenePath, TArray<FString>& Result) {
+bool UBg2DownloadParser::SceneParser(const FString& ScenePath, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
-
+	//UBg2Scene::GetExternalResources(ScenePath, Result);
 
 	return bIsParsed;
 }
 
-bool UBg2DownloadParser::ModelParser(FString& ModelPath, TArray<FString>& Result) {
+bool UBg2DownloadParser::ModelParser(const FString& ModelPath, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
-
+	//UBg2Model::GetExternalResources(ModelPath, Result);
 
 	return bIsParsed;
 }
 
-bool UBg2DownloadParser::MaterialParser(FString& MaterialPath, TArray<FString>& Result) {
+bool UBg2DownloadParser::MaterialParser(const TSharedPtr<FJsonObject>& JsonObject, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
-
+	//UBg2Material::GetExternalResources(JsonObject, Result);
 
 	return bIsParsed;
 }

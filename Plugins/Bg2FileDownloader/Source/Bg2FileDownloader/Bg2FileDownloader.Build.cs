@@ -44,6 +44,7 @@ public class Bg2FileDownloader : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"Bg2UnrealTools"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
