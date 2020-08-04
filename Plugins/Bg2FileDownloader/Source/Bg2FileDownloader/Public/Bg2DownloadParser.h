@@ -17,13 +17,13 @@ class BG2FILEDOWNLOADER_API UBg2DownloadParser : public UObject
 	
 
 public:
-	bool IndexParser();
+	bool IndexParser(FString& IndexPath, TArray<FString>& Result);
 
-	bool SceneParser();
+	bool SceneParser(FString& ScenePath, TArray<FString>& Result);
 
-	bool ModelParser();
+	bool ModelParser(FString& ModelPath, TArray<FString>& Result);
 
-	bool MaterialParser();
+	bool MaterialParser(FString& MaterialPath, TArray<FString>& Result);
 	
 private:
 

@@ -8,29 +8,33 @@
 #include "..\..\..\..\Bg2UnrealTools\Source\Bg2UnrealTools\Public\Bg2Material.h"
 
 
-bool UBg2DownloadParser::IndexParser() {
+bool UBg2DownloadParser::IndexParser(FString& IndexPath, TArray<FString>& Result) {
 	bool bIsParsed = false;
+
 
 
 	return bIsParsed;
 }
 
-bool UBg2DownloadParser::SceneParser() {
+bool UBg2DownloadParser::SceneParser(FString& ScenePath, TArray<FString>& Result) {
 	bool bIsParsed = false;
+
 
 
 	return bIsParsed;
 }
 
-bool UBg2DownloadParser::ModelParser() {
+bool UBg2DownloadParser::ModelParser(FString& ModelPath, TArray<FString>& Result) {
 	bool bIsParsed = false;
+
 
 
 	return bIsParsed;
 }
 
-bool UBg2DownloadParser::MaterialParser() {
+bool UBg2DownloadParser::MaterialParser(FString& MaterialPath, TArray<FString>& Result) {
 	bool bIsParsed = false;
+
 
 
 	return bIsParsed;
