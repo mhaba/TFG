@@ -6,6 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "Interfaces/IHttpRequest.h"
 
+#include "Bg2DownloadParser.h"
+
 #include "Bg2Downloader.generated.h"
 
 UCLASS(Blueprintable)
@@ -14,7 +16,7 @@ class BG2FILEDOWNLOADER_API UBg2Downloader : public UObject
 	GENERATED_BODY()
 
 public:
-	bool* bAndroidReady;
+	//bool* bAndroidReady;
 
 public:
 	/**
@@ -31,9 +33,9 @@ public:
 	static FString GetDownloadPath();
 
 	/** Checks if Android device is ready to work with */
-	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
+	/*UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
 	static bool CheckAndroidReadiness();
-
+	*/
 
 private:
 	void Start(FString URL);
@@ -44,8 +46,8 @@ private:
 	/** Shows download progress */
 	void OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved);
 
-	void AndroidReadiness();
-
+	//void AndroidReadiness();
+	bool CheckAndroidReadiness();
 
 	void SetDownloadPath(FString DownloadPath);
 

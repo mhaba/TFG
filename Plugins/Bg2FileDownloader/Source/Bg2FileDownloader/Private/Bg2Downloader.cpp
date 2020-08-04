@@ -15,6 +15,8 @@
 FString mDownloadPath = "Path";
 FString mBg2Thing = "FirstThing";
 
+bool bIsReady = false;
+
 UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
 	DownloadTask->Start(URL);
@@ -46,7 +48,7 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 	Request->OnProcessRequestComplete().Unbind();
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
-		if (CheckAndroidReadiness()) {
+		//if (CheckAndroidReadiness()) {
 			IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 			IFileManager* FileManager = &IFileManager::Get();
 
@@ -75,12 +77,10 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 				//	Close and finish rhe operation
 				delete fileHandler;
 			}
-		}
+		//}
 
 	}
 }
-
-
 
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)
 {
@@ -88,9 +88,8 @@ void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesS
 	int32 size = HttpRequest->GetContentLength();
 }
 
-
-void UBg2Downloader::AndroidReadiness() {
-	/*bool bIsReady = false;
+/*void UBg2Downloader::AndroidReadiness() {
+	//bool bIsReady = false;
 	TArray<FString> mAndroidPermArr;
 	mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
 
@@ -103,12 +102,17 @@ void UBg2Downloader::AndroidReadiness() {
 		mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
 			if (GrantResults.Num() > 0) {
 				if (GrantResults[0]) {
-					*UBg2Downloader::bAndroidReady = true;
+					//bAndroidReady = true;
+					bIsReady = true;
+				}
+				else {
+					bIsReady = false;
 				}
 			}
+			
 		});
-	}*/
-
+	}
+	
 	if (mBg2Thing.Equals("FirstThing")) {
 		*UBg2Downloader::bAndroidReady = false;
 	}
@@ -135,14 +139,40 @@ void UBg2Downloader::AndroidReadiness() {
 
 	}
 
-}
+}*/
 
-bool UBg2Downloader::CheckAndroidReadiness() {
+/*bool UBg2Downloader::CheckAndroidReadiness() {
 	UBg2Downloader bg2dwn;
 	bg2dwn.AndroidReadiness();					//	We are in a static function, we must access this way.
 	return *bg2dwn.bAndroidReady;				//	""
-}
+	
+}*/
 
+bool UBg2Downloader::CheckAndroidReadiness()
+{
+	TArray<FString> mAndroidPermArr;
+	mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
+
+	//bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
+	bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(mAndroidPermArr[0]);
+
+	if (!bIsReady) {
+		UAndroidPermissionCallbackProxy* mCallback = UAndroidPermissionFunctionLibrary::AcquirePermissions(mAndroidPermArr);
+
+		mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
+			if (GrantResults.Num() > 0) {
+				if (GrantResults[0]) {
+					bIsReady = true;
+				}
+				else {
+					bIsReady = false;
+				}
+			}
+
+			});
+	}
+	return bIsReady;
+}
 
 void UBg2Downloader::SetDownloadPath(FString DownloadPath)
 {
