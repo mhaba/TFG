@@ -19,7 +19,7 @@
 bool UBg2DownloadParser::SceneParser(const FString& ScenePath, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
-	//UBg2Scene::GetExternalResources(ScenePath, Result);
+	UBg2Scene::GetExternalResources(ScenePath, Result);
 
 	return bIsParsed;
 }
@@ -27,7 +27,7 @@ bool UBg2DownloadParser::SceneParser(const FString& ScenePath, TArray<FString>& 
 bool UBg2DownloadParser::ModelParser(const FString& ModelPath, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
-	//UBg2Model::GetExternalResources(ModelPath, Result);
+	UBg2Model::GetExternalResources(ModelPath, Result);
 
 	return bIsParsed;
 }
@@ -35,7 +35,7 @@ bool UBg2DownloadParser::ModelParser(const FString& ModelPath, TArray<FString>& 
 bool UBg2DownloadParser::MaterialParser(const TSharedPtr<FJsonObject>& JsonObject, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
-	//UBg2Material::GetExternalResources(JsonObject, Result);
+	UBg2Material::GetExternalResources(JsonObject, Result);
 
 	return bIsParsed;
 }
