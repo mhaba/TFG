@@ -15,7 +15,9 @@
 
 
 FString mDownloadPath = "Path";
-FString mBg2Thing = "FirstThing";
+FString mScene = "/Test.txt";
+//FString mScene = "Test.txt";
+FString mURL;
 
 bool bIsReady = false;
 
@@ -27,15 +29,26 @@ UBg2Downloader* UBg2Downloader::Download(FString URL) {
 }
 
 void UBg2Downloader::Start(FString URL) {
-	FString defaultURL = "http://192.168.0.18:8080";
-	if (URL.IsEmpty()){
-		URL = defaultURL;
+	//	If URL equals http://192.168.0.18:8080, we would request the default file.
+	mURL = URL;
+
+	if (mURL.Equals("http://192.168.0.18:8080") || mURL.Equals("http://localhost:8080")) {
+		mURL += mScene;
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,        // don't over wrire previous message, add a new one
+				12.35f,   // Duration of message - limits distance messages scroll onto screen
+				FColor::Cyan.WithAlpha(64),   // Color and transparancy!
+				FString::Printf(TEXT("%s"), *mURL)  // Our usual text message format
+			);
+		}
 	}
 
 	// Create the IHttpRequest object from FHttpModule singleton interface.
 	TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
 	request->OnProcessRequestComplete().BindUObject(this, &UBg2Downloader::HandleRequest);
-	request->SetURL(URL);
+	request->SetURL(mURL);
 	request->SetVerb(TEXT("GET"));
 
 	//	Start Processing the request.
@@ -50,6 +63,7 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 	Request->OnProcessRequestComplete().Unbind();
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
+
 		//if (CheckAndroidReadiness()) {
 			IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 			IFileManager* FileManager = &IFileManager::Get();
@@ -59,11 +73,36 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 			SetDownloadPath(savePath);
 
 			FString filename = savePath;
-			if (mBg2Thing.Equals("FirstThing")) {
+			//FPaths::Split();
+			/*if (mBg2Thing.Equals("FirstThing")) {
 				filename += FString("Test.txt");
 			}
 			else {
 				filename += mBg2Thing;
+			}*/
+
+			if (mURL.Contains(mScene)) {
+				filename += mScene;
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(
+						-1,        // don't over wrire previous message, add a new one
+						12.35f,   // Duration of message - limits distance messages scroll onto screen
+						FColor::Cyan.WithAlpha(64),   // Color and transparancy!
+						FString::Printf(TEXT("SSSSSSSSSSSSSSSSS %s"),*filename)  // Our usual text message format
+					);
+				}
+			}
+			else {
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(
+						-1,        // don't over wrire previous message, add a new one
+						12.35f,   // Duration of message - limits distance messages scroll onto screen
+						FColor::Cyan.WithAlpha(64),   // Color and transparancy!
+						FString::Printf(TEXT("NNNNNNNNNNNNNNNN %s"), *filename)  // Our usual text message format
+					);
+				}
 			}
 
 			if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
