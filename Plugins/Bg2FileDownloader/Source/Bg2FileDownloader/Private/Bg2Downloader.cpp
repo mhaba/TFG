@@ -92,6 +92,10 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 	}
 }
 
+void UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Result) {
+
+}
+
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)
 {
 	//	TODO:	USARLO EN UNA BARRA DE CARGA ?
