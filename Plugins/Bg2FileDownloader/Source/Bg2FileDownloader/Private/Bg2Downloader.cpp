@@ -34,6 +34,7 @@ UBg2Downloader* UBg2Downloader::Download(FString URL) {
 void UBg2Downloader::Start(FString URL) {
 	SetActualURL(URL);
 
+	//	If these two URLs are equal then this is the scene's request.
 	if (GetActualURL().Equals(GetBaseURL())) {
 		URL += mScene;
 		SetActualURL(URL);
