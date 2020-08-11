@@ -22,6 +22,8 @@ FString mItem;
 bool bIsReady = false;
 bool bSceneParsed = false;
 
+//UBg2DownloadParser* DownloadPars = NewObject<UBg2DownloadParser>();
+
 UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
 	DownloadTask->Start(URL);
@@ -93,7 +95,17 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 }
 
 void UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Result) {
+	//DownloadPars->SceneParser(Path, Result);
+	UBg2DownloadParser::SceneParser(Path, Result);
 
+	FString mURL;
+
+	for (int32 i = 0; i < Result.Num(); ++i)
+	{
+		//UE_LOG(Bg2Tools, Display, TEXT("Scene external resource: %s"), *Result[i]);
+		mURL = GetBaseURL() + *Result[i];
+		Start(mURL);
+	}
 }
 
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)

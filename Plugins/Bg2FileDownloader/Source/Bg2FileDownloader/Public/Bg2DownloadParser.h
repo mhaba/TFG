@@ -19,11 +19,11 @@ class BG2FILEDOWNLOADER_API UBg2DownloadParser : public UObject
 public:
 	/*bool IndexParser(const FString& IndexPath, TArray<FString>& Result);*/
 
-	bool SceneParser(const FString& ScenePath, TArray<FString>& Result);
+	static bool SceneParser(const FString& ScenePath, TArray<FString>& Result);
 
-	bool ModelParser(const FString& ModelPath, TArray<FString>& Result);
+	static bool ModelParser(const FString& ModelPath, TArray<FString>& Result);
 
-	bool MaterialParser(const TSharedPtr<FJsonObject>& JsonObject, TArray<FString>& Result);
+	static bool MaterialParser(const TSharedPtr<FJsonObject>& JsonObject, TArray<FString>& Result);
 	
 private:
 
