@@ -14,12 +14,13 @@
 #include "Bg2DownloadParser.h"
 
 
-FString mDownloadPath = "Path";
 FString mScene = "/Test.txt";
-//FString mScene = "Test.txt";
-FString mURL;
+FString mActualURL = "http://192.168.0.18:8080";
+FString mBaseURL = "http://192.168.0.18:8080";
+FString mItem;
 
 bool bIsReady = false;
+bool bSceneParsed = false;
 
 UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
@@ -29,26 +30,18 @@ UBg2Downloader* UBg2Downloader::Download(FString URL) {
 }
 
 void UBg2Downloader::Start(FString URL) {
-	//	If URL equals http://192.168.0.18:8080, we would request the default file.
-	mURL = URL;
+	SetActualURL(URL);
 
-	if (mURL.Equals("http://192.168.0.18:8080") || mURL.Equals("http://localhost:8080")) {
-		mURL += mScene;
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,        // don't over wrire previous message, add a new one
-				12.35f,   // Duration of message - limits distance messages scroll onto screen
-				FColor::Cyan.WithAlpha(64),   // Color and transparancy!
-				FString::Printf(TEXT("%s"), *mURL)  // Our usual text message format
-			);
-		}
+	if (GetActualURL().Equals(GetBaseURL())) {
+		URL += mScene;
+		SetActualURL(URL);
+
 	}
 
 	// Create the IHttpRequest object from FHttpModule singleton interface.
 	TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
 	request->OnProcessRequestComplete().BindUObject(this, &UBg2Downloader::HandleRequest);
-	request->SetURL(mURL);
+	request->SetURL(URL);
 	request->SetVerb(TEXT("GET"));
 
 	//	Start Processing the request.
@@ -62,63 +55,40 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
 
+	FString mURL = GetActualURL();
+
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
 
-		//if (CheckAndroidReadiness()) {
-			IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
-			IFileManager* FileManager = &IFileManager::Get();
+		IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+		IFileManager* FileManager = &IFileManager::Get();
 
-			//	Create save directory path
-			FString savePath = FPaths::ProjectSavedDir();
-			SetDownloadPath(savePath);
+		//	Create save directory path
+		FString savePath = FPaths::ProjectSavedDir();
+		FString filename = savePath;
 
-			FString filename = savePath;
-			//FPaths::Split();
-			/*if (mBg2Thing.Equals("FirstThing")) {
-				filename += FString("Test.txt");
-			}
-			else {
-				filename += mBg2Thing;
-			}*/
+		if (mURL.Contains(mScene)) {
+			filename += mScene;
+			TArray<FString> sceneResources;
 
-			if (mURL.Contains(mScene)) {
-				filename += mScene;
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(
-						-1,        // don't over wrire previous message, add a new one
-						12.35f,   // Duration of message - limits distance messages scroll onto screen
-						FColor::Cyan.WithAlpha(64),   // Color and transparancy!
-						FString::Printf(TEXT("SSSSSSSSSSSSSSSSS %s"),*filename)  // Our usual text message format
-					);
-				}
-			}
-			else {
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(
-						-1,        // don't over wrire previous message, add a new one
-						12.35f,   // Duration of message - limits distance messages scroll onto screen
-						FColor::Cyan.WithAlpha(64),   // Color and transparancy!
-						FString::Printf(TEXT("NNNNNNNNNNNNNNNN %s"), *filename)  // Our usual text message format
-					);
-				}
-			}
 
-			if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
-				//	Create directory
-				PlatformFile.CreateDirectoryTree(*savePath);
-			}
+		}
+		else {
 
-			//	Create the file
-			IFileHandle* fileHandler = PlatformFile.OpenWrite(*filename);
-			if (fileHandler) {
-				//	Write the new file from the response
-				fileHandler->Write(Response->GetContent().GetData(), Response->GetContentLength());
-				//	Close and finish rhe operation
-				delete fileHandler;
-			}
-		//}
+		}
+
+		if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
+			//	Create directory
+			PlatformFile.CreateDirectoryTree(*savePath);
+		}
+
+		//	Create the file
+		IFileHandle* fileHandler = PlatformFile.OpenWrite(*filename);
+		if (fileHandler) {
+			//	Write the new file from the response
+			fileHandler->Write(Response->GetContent().GetData(), Response->GetContentLength());
+			//	Close and finish rhe operation
+			delete fileHandler;
+		}
 	}
 }
 
@@ -128,100 +98,22 @@ void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesS
 	int32 size = HttpRequest->GetContentLength();
 }
 
-/*void UBg2Downloader::AndroidReadiness() {
-	//bool bIsReady = false;
-	TArray<FString> mAndroidPermArr;
-	mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
-
-	//bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
-	bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(mAndroidPermArr[0]);
-
-	if (!bIsReady) {
-		UAndroidPermissionCallbackProxy* mCallback = UAndroidPermissionFunctionLibrary::AcquirePermissions(mAndroidPermArr);
-		
-		mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
-			if (GrantResults.Num() > 0) {
-				if (GrantResults[0]) {
-					//bAndroidReady = true;
-					bIsReady = true;
-				}
-				else {
-					bIsReady = false;
-				}
-			}
-			
-		});
-	}
-	
-	if (mBg2Thing.Equals("FirstThing")) {
-		*UBg2Downloader::bAndroidReady = false;
-	}
-
-	if (!*UBg2Downloader::bAndroidReady) {
-		TArray<FString> mAndroidPermArr;
-		mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
-
-		*UBg2Downloader::bAndroidReady = UAndroidPermissionFunctionLibrary::CheckPermission(mAndroidPermArr[0]);
-		if (!*UBg2Downloader::bAndroidReady) {
-			UAndroidPermissionCallbackProxy* mCallback = UAndroidPermissionFunctionLibrary::AcquirePermissions(mAndroidPermArr);
-
-			mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
-				if (GrantResults.Num() > 0) {
-					if (GrantResults[0]) {
-						*UBg2Downloader::bAndroidReady = true;
-					}
-					else {
-						*UBg2Downloader::bAndroidReady = false;
-					}
-				}
-				});
-		}
-
-	}
-
-}*/
-
-/*bool UBg2Downloader::CheckAndroidReadiness() {
-	UBg2Downloader bg2dwn;
-	bg2dwn.AndroidReadiness();					//	We are in a static function, we must access this way.
-	return *bg2dwn.bAndroidReady;				//	""
-	
-}*/
-
-bool UBg2Downloader::CheckAndroidReadiness()
+FString UBg2Downloader::GetBaseURL()
 {
-	TArray<FString> mAndroidPermArr;
-	mAndroidPermArr.Add(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
-
-	//bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(TEXT("android.permission.WRITE_EXTERNAL_STORAGE"));
-	bIsReady = UAndroidPermissionFunctionLibrary::CheckPermission(mAndroidPermArr[0]);
-
-	if (!bIsReady) {
-		UAndroidPermissionCallbackProxy* mCallback = UAndroidPermissionFunctionLibrary::AcquirePermissions(mAndroidPermArr);
-
-		mCallback->OnPermissionsGrantedDelegate.BindLambda([this](const TArray<FString>& Permissions, const TArray<bool>& GrantResults) {
-			if (GrantResults.Num() > 0) {
-				if (GrantResults[0]) {
-					bIsReady = true;
-				}
-				else {
-					bIsReady = false;
-				}
-			}
-
-			});
-	}
-	return bIsReady;
+	return mBaseURL;
 }
 
-void UBg2Downloader::SetDownloadPath(FString DownloadPath)
+FString UBg2Downloader::GetActualURL()
 {
-	mDownloadPath = DownloadPath;
+	return mActualURL;
 }
 
-FString UBg2Downloader::GetDownloadPath() {
-	if (mDownloadPath.Equals("Path")) {
-		return FPaths::ProjectSavedDir();	//	Default
-	}
-	return mDownloadPath;
+void UBg2Downloader::SetBaseURL(FString URL)
+{
+	mBaseURL = URL;
+}
+
+void UBg2Downloader::SetActualURL(FString URL)
+{
+	mActualURL = URL;
 }
