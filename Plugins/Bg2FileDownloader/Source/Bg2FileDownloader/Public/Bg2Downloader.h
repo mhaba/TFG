@@ -28,13 +28,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
 	static UBg2Downloader* Download(FString URL);
 
-	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
-	static FString GetDownloadPath();
-
 	/** Checks if Android device is ready to work with */
 	/*UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
 	static bool CheckAndroidReadiness();
 	*/
+
+	FString GetBaseURL();
+
+	FString GetActualURL();
 
 private:
 	void Start(FString URL);
@@ -45,9 +46,8 @@ private:
 	/** Shows download progress */
 	void OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved);
 
-	//void AndroidReadiness();
-	bool CheckAndroidReadiness();
+	void SetBaseURL(FString URL);
 
-	void SetDownloadPath(FString DownloadPath);
+	void SetActualURL(FString URL);
 
 };
