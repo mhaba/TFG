@@ -14,7 +14,10 @@
 #include "Bg2DownloadParser.h"
 
 
-FString mScene = "/Test.txt";
+//FString mSceneName = "/Test.txt";
+const FString mSceneName = "/ExampleScene.vitscnj";
+FString mModelExt = "VWGLB";
+
 FString mActualURL = "http://192.168.0.18:8080";
 FString mBaseURL = "http://192.168.0.18:8080";
 FString mItem;
@@ -28,6 +31,10 @@ UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
 	DownloadTask->Start(URL);
 
+
+	//	Maybe Start() should return a bool, so we could see if the funcition was
+	//	a success or a failure.
+
 	return DownloadTask;
 }
 
@@ -36,29 +43,43 @@ void UBg2Downloader::Start(FString URL) {
 
 	//	If these two URLs are equal then this is the scene's request.
 	if (GetActualURL().Equals(GetBaseURL())) {
-		URL += mScene;
+		URL += mSceneName;
 		SetActualURL(URL);
+	}
 
+	if (GEngine) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Start downloading in: ") + GetActualURL());
 	}
 
 	// Create the IHttpRequest object from FHttpModule singleton interface.
 	TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
 	request->OnProcessRequestComplete().BindUObject(this, &UBg2Downloader::HandleRequest);
-	request->SetURL(URL);
+	request->SetURL(GetActualURL());
 	request->SetVerb(TEXT("GET"));
 
 	//	Start Processing the request.
 	request->ProcessRequest();
+
 	//	Prevent the object to be deleted during garbage collection.
 	AddToRoot();
 }
 
 void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccess) {
 
+	if (GEngine) {
+		FString log1, log2, log3 = "";
+		if (bSuccess) log1 = "I'm in, but bSuccess = true";
+		if (Response.IsValid()) log2 = ", Response = true";
+		if (Response->GetContentLength() > 0) log3 = ", ResponseContent = true";
+		FString log = log1 + log2 + log3;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("REQUEST: ") + log);
+	}
+
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
 
 	FString mURL = GetActualURL();
+		
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
 
@@ -67,16 +88,22 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 
 		//	Create save directory path
 		FString savePath = FPaths::ProjectSavedDir();
+
+		//	This is not absolutely correct, it's a to-be modified string.
+		//	TO DO: Maybe change to fileSavePath?
 		FString filename = savePath;
 
-		if (mURL.Contains(mScene)) {
-			filename += mScene;
-			TArray<FString> sceneResources;
+		TArray<FString> mResources;
 
-
+		if (mURL.Contains(mSceneName)) {
+			filename += mSceneName;
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Filename: ")+filename);
+			//DoLoadResources(filename, mResources);
 		}
 		else {
 
+			//DoLoadResources(filename, mResources);
 		}
 
 		if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
@@ -93,20 +120,36 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 			delete fileHandler;
 		}
 	}
+
 }
 
-void UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Result) {
-	//DownloadPars->SceneParser(Path, Result);
-	UBg2DownloadParser::SceneParser(Path, Result);
+bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Result) {
+	FString mURL = GetActualURL();
 
-	FString mURL;
+	//	Obtain the scene's objects to download.
+	if (mURL.Contains(mSceneName)) {
+		UBg2DownloadParser::SceneParser(Path, Result);
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("I'm on the parser!"));
+	}
+	//	Obtain the model's objects to download.
+	else if (mURL.Contains(mModelExt)) {
+		UBg2DownloadParser::ModelParser(Path, Result);
+	}
+	//	Images and materials will not be processed.
+	else {
+		return true;
+	}
 
 	for (int32 i = 0; i < Result.Num(); ++i)
 	{
 		//UE_LOG(Bg2Tools, Display, TEXT("Scene external resource: %s"), *Result[i]);
 		mURL = GetBaseURL() + *Result[i];
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ")+GetActualURL());
 		Start(mURL);
 	}
+	return true;
 }
 
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)
