@@ -20,7 +20,7 @@ FString mModelExt = "VWGLB";
 
 FString mActualURL = "http://192.168.0.18:8080";
 FString mBaseURL = "http://192.168.0.18:8080";
-FString mItem;
+TArray<FString> mResources;
 
 bool bIsReady = false;
 bool bSceneParsed = false;
@@ -45,10 +45,6 @@ void UBg2Downloader::Start(FString URL) {
 	if (GetActualURL().Equals(GetBaseURL())) {
 		URL += mSceneName;
 		SetActualURL(URL);
-	}
-
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Start downloading in: ") + GetActualURL());
 	}
 
 	// Create the IHttpRequest object from FHttpModule singleton interface.
@@ -79,7 +75,7 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 	Request->OnProcessRequestComplete().Unbind();
 
 	FString mURL = GetActualURL();
-		
+	
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
 
@@ -89,22 +85,11 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 		//	Create save directory path
 		FString savePath = FPaths::ProjectSavedDir();
 
-		//	This is not absolutely correct, it's a to-be modified string.
-		//	TO DO: Maybe change to fileSavePath?
-		FString filename = savePath;
+		FString fileSavePath = savePath;
+		fileSavePath += FPaths::GetCleanFilename(mURL);
 
-		TArray<FString> mResources;
+		DoLoadResources(fileSavePath, mResources);
 
-		if (mURL.Contains(mSceneName)) {
-			filename += mSceneName;
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Filename: ")+filename);
-			//DoLoadResources(filename, mResources);
-		}
-		else {
-
-			//DoLoadResources(filename, mResources);
-		}
 
 		if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
 			//	Create directory
@@ -112,7 +97,7 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 		}
 
 		//	Create the file
-		IFileHandle* fileHandler = PlatformFile.OpenWrite(*filename);
+		IFileHandle* fileHandler = PlatformFile.OpenWrite(*fileSavePath);
 		if (fileHandler) {
 			//	Write the new file from the response
 			fileHandler->Write(Response->GetContent().GetData(), Response->GetContentLength());
@@ -129,8 +114,11 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 	//	Obtain the scene's objects to download.
 	if (mURL.Contains(mSceneName)) {
 		UBg2DownloadParser::SceneParser(Path, Result);
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("I'm on the parser!"));
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Number of things to download " + FString::FromInt(Result.Num())));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("PATH: " + Path));
+		}
+			
 	}
 	//	Obtain the model's objects to download.
 	else if (mURL.Contains(mModelExt)) {
@@ -147,7 +135,7 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 		mURL = GetBaseURL() + *Result[i];
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ")+GetActualURL());
-		Start(mURL);
+		//Start(mURL);
 	}
 	return true;
 }

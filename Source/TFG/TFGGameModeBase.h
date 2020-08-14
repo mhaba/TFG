@@ -15,8 +15,8 @@ UCLASS()
 class TFG_API ATFGGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-
-public:
+};
+/*public:
 	ATFGGameModeBase();						//	Constructor
 
 	UFUNCTION(BlueprintCallable)
@@ -30,7 +30,6 @@ public:
 		FString url;						//	Composer IP/url
 
 private:
-	/** Handles image requests coming from the web */
+	/** Handles image requests coming from the web 
 	void HandleRequest(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
-
-};
+	*/

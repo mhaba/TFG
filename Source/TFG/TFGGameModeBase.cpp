@@ -16,6 +16,7 @@
 
 //using namespace FHttpRetrySystem;
 
+/*
 ATFGGameModeBase::ATFGGameModeBase() {
 	ATFGGameModeBase::url = "192.168.0.18:8080";
 }
@@ -31,7 +32,7 @@ void ATFGGameModeBase::Connect() {
 				request->GetResponse()->GetResponseCode(),
 				*request->GetResponse()->GetContentAsString());
 		}
-	);*/
+	);
 	request->OnProcessRequestComplete().BindUObject(this, &ATFGGameModeBase::HandleRequest);
 
 	request->SetURL(GetUrl());
@@ -49,4 +50,4 @@ FString ATFGGameModeBase::GetUrl() {
 
 void ATFGGameModeBase::SetUrl(FString mUrl) {
 	this->url = mUrl;
-}
+}*/
