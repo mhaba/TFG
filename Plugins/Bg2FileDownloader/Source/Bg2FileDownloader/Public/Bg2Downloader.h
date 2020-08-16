@@ -43,7 +43,7 @@ private:
 	/** Handles requests coming from the URL */
 	void HandleRequest(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 
-	void DoLoadResources(const FString& Path, TArray<FString>& Result);
+	bool DoLoadResources(const FString& Path, TArray<FString>& Result);
 
 	/** Shows download progress */
 	void OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved);

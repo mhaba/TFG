@@ -28,6 +28,10 @@
 				{
 					"name": "Bg2UnrealTools",
 					"enabled": true
+				},
+				{
+					"name": "AndroidPermission",
+					"enabled": true
 				}
 		]
 }

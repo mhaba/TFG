@@ -7,7 +7,6 @@ public class Bg2FileDownloader : ModuleRules
 	public Bg2FileDownloader(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
