@@ -1,7 +1,10 @@
 const http = require('http'),
     fs = require('fs'),
-    path = require('path')
-    url = require('url')
+    path = require('path'),
+    url = require('url'),
+    os = require( 'os' );
+
+let networkInterfaces = os.networkInterfaces( );
 
 const config = require("./config.json");
 
@@ -20,7 +23,14 @@ var filename
 
 doWork()
 
-console.log("Server running at http://192.168.0.18:8080 (http://localhost:8080)\n")
+console.log(`Server running and listening at:\n`);
+console.log("Interfaces:\n");
+for (let key in networkInterfaces) {
+    console.log(`  ${ key }:`);
+    networkInterfaces[key].forEach((interface) => {
+        console.log(`     ${ interface.address }:${ port }`);
+    });
+}
 
 
 function doWork(){
