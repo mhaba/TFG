@@ -10,6 +10,7 @@
 #include "HAL/FileManager.h"
 #include "AndroidPermissionFunctionLibrary.h"
 #include "AndroidPermissionCallbackProxy.h"
+#include "GenericPlatform/GenericPlatformHttp.h"
 
 #include "Bg2DownloadParser.h"
 
@@ -18,8 +19,8 @@
 const FString mSceneName = "/ExampleScene.vitscnj";
 FString mModelExt = "VWGLB";
 
-FString mActualURL = "http://192.168.0.18:8080";
-FString mBaseURL = "http://192.168.0.18:8080";
+FString mActualURL = "http://192.168.1.16:8080";
+FString mBaseURL = "http://192.168.1.16:8080";
 TArray<FString> mResources;
 
 bool bIsReady = false;
@@ -74,7 +75,8 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
 
-	FString mURL = GetActualURL();
+	// GetActualURL(); 
+	FString mURL = Request->GetURL();
 	
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
@@ -86,9 +88,8 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 		FString savePath = FPaths::ProjectSavedDir();
 
 		FString fileSavePath = savePath;
-		fileSavePath += FPaths::GetCleanFilename(mURL);
+		fileSavePath += FGenericPlatformHttp::UrlDecode(FPaths::GetCleanFilename(mURL));
 
-		DoLoadResources(fileSavePath, mResources);
 
 
 		if (!PlatformFile.DirectoryExists(*savePath) || !FileManager->DirectoryExists(*savePath)) {
@@ -104,6 +105,8 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 			//	Close and finish rhe operation
 			delete fileHandler;
 		}
+
+		DoLoadResources(fileSavePath, mResources);
 	}
 
 }
@@ -118,13 +121,7 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Number of things to download " + FString::FromInt(Result.Num())));
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("PATH: " + Path));
 		}
-			
 	}
-	//	Obtain the model's objects to download.
-	else if (mURL.Contains(mModelExt)) {
-		UBg2DownloadParser::ModelParser(Path, Result);
-	}
-	//	Images and materials will not be processed.
 	else {
 		return true;
 	}
@@ -132,10 +129,12 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 	for (int32 i = 0; i < Result.Num(); ++i)
 	{
 		//UE_LOG(Bg2Tools, Display, TEXT("Scene external resource: %s"), *Result[i]);
-		mURL = GetBaseURL() + *Result[i];
+		//mURL = GetBaseURL() + "/" + *Result[i];
+		FString URL = GetBaseURL() + "/" + FGenericPlatformHttp::UrlEncode(*Result[i]);
 		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ")+GetActualURL());
-		//Start(mURL);
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ") + URL);
+		UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
+		DownloadTask->Start(URL);
 	}
 	return true;
 }

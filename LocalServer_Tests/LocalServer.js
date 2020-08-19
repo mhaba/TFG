@@ -54,7 +54,10 @@ function doWork(){
 }
 
 function doReadFile(filename, filepath, res){
-    fs.readFile(filepath,"utf8", function(err, data){
+    filename = decodeURIComponent(filename);
+    filepath = decodeURIComponent(filepath);
+    let encoding = filename == defaultSceneName ? "utf8" : "";
+    fs.readFile(filepath,encoding, function(err, data){
         if(err){
             console.log("hola",err)
             console.log("Error, file not found. filename: " + filename + "\n")
@@ -68,7 +71,7 @@ function doReadFile(filename, filepath, res){
             res.statusCode = 200
             res.setHeader('Content-disposition', 'attachment; filename='+filename)
             res.setHeader('Content-Type', 'text/plain')
-
+            
             if (filename == defaultSceneName) {
                 let sceneData = JSON.parse(data);
                 sceneData.resources = [];
