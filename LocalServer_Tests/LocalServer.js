@@ -3,10 +3,16 @@ const http = require('http'),
     path = require('path')
     url = require('url')
 
-const port = '8080'
+const config = require("./config.json");
+
+const port = config.port;
 
 //  Yo must change basePath to the location that contains the scene to download.
-const basePath = 'C:\\Develop\\TFG\\LocalServer_Tests\\ExampleScene'
+let basePath = config.basePath;
+
+if (!path.isAbsolute(basePath)) {
+    basePath = path.join(__dirname, basePath);
+}
 
 
 var sceneExtension = '.vitscnj'
