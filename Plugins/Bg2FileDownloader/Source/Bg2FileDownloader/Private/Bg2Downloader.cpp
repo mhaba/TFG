@@ -11,6 +11,7 @@
 #include "AndroidPermissionFunctionLibrary.h"
 #include "AndroidPermissionCallbackProxy.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Bg2DownloadParser.h"
 
@@ -29,17 +30,21 @@ bool bSceneParsed = false;
 //UBg2DownloadParser* DownloadPars = NewObject<UBg2DownloadParser>();
 
 UBg2Downloader* UBg2Downloader::Download(FString URL) {
-	UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
-	DownloadTask->Start(URL);
+	Start(URL, [&]() {
+		// Se han descargado todos los recursos, lanzamos un evento para informar de que se ha terminado la descarga
+		this->OnDownloadFinished.Broadcast();
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Download completed"));
+	});
 
 
 	//	Maybe Start() should return a bool, so we could see if the funcition was
 	//	a success or a failure.
-
-	return DownloadTask;
+	return this;
 }
 
-void UBg2Downloader::Start(FString URL) {
+void UBg2Downloader::Start(FString URL, std::function<void ()> onComplete) {
+	mOnComplete = onComplete;
+
 	SetActualURL(URL);
 
 	//	If these two URLs are equal then this is the scene's request.
@@ -116,6 +121,8 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 
 	//	Obtain the scene's objects to download.
 	if (mURL.Contains(mSceneName)) {
+		// End of main scene file download
+		ScenePath = Path;
 		UBg2DownloadParser::SceneParser(Path, Result);
 		if (GEngine) {
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Number of things to download " + FString::FromInt(Result.Num())));
@@ -123,18 +130,26 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 		}
 	}
 	else {
+		// End of resource file download
+		mOnComplete();
 		return true;
 	}
 
+	// Main scene download: check how many resource files 
+	mNumResources = Result.Num();
+	mDownloadedResources = 0;
 	for (int32 i = 0; i < Result.Num(); ++i)
 	{
-		//UE_LOG(Bg2Tools, Display, TEXT("Scene external resource: %s"), *Result[i]);
-		//mURL = GetBaseURL() + "/" + *Result[i];
 		FString URL = GetBaseURL() + "/" + FGenericPlatformHttp::UrlEncode(*Result[i]);
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ") + URL);
 		UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
-		DownloadTask->Start(URL);
+		DownloadTask->Start(URL, [&]() {
+			mDownloadedResources++;
+			if (mDownloadedResources == mNumResources) {
+				mOnComplete();
+			}
+		});
 	}
 	return true;
 }
