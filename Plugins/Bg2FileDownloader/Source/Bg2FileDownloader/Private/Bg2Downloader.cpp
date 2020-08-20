@@ -12,16 +12,15 @@
 #include "AndroidPermissionCallbackProxy.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
 #include "Kismet/GameplayStatics.h"
+#include "Internationalization/Regex.h"
 
 #include "Bg2DownloadParser.h"
 
 
-//FString mSceneName = "/Test.txt";
 const FString mSceneName = "/ExampleScene.vitscnj";
-FString mModelExt = "VWGLB";
 
-FString mActualURL = "http://192.168.1.16:8080";
-FString mBaseURL = "http://192.168.1.16:8080";
+FString mActualURL = "http://192.168.0.18:8080";
+FString mBaseURL = "http://192.168.0.18:8080";
 TArray<FString> mResources;
 
 bool bIsReady = false;
@@ -33,7 +32,7 @@ UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	Start(URL, [&]() {
 		// Se han descargado todos los recursos, lanzamos un evento para informar de que se ha terminado la descarga
 		this->OnDownloadFinished.Broadcast();
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Download completed"));
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Download completed"));
 	});
 
 
@@ -48,7 +47,15 @@ void UBg2Downloader::Start(FString URL, std::function<void ()> onComplete) {
 	SetActualURL(URL);
 
 	//	If these two URLs are equal then this is the scene's request.
-	if (GetActualURL().Equals(GetBaseURL())) {
+	//if (GetActualURL().Equals(GetBaseURL())) {
+	
+	const FRegexPattern containsFilePattern(TEXT(".*[^/]/{1}([a-zA-Z0-9\\-_\\%]+\\.[a-zA-Z0-9\\-_]+)$"));
+	FString ActualUrl = GetActualURL();
+	FRegexMatcher fileMatcher(containsFilePattern, ActualUrl);
+	
+	if (!fileMatcher.FindNext()) {
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, TEXT("EEEEEY"));
+		SetBaseURL(URL);
 		URL += mSceneName;
 		SetActualURL(URL);
 	}
@@ -56,7 +63,7 @@ void UBg2Downloader::Start(FString URL, std::function<void ()> onComplete) {
 	// Create the IHttpRequest object from FHttpModule singleton interface.
 	TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
 	request->OnProcessRequestComplete().BindUObject(this, &UBg2Downloader::HandleRequest);
-	request->SetURL(GetActualURL());
+	request->SetURL(URL);
 	request->SetVerb(TEXT("GET"));
 
 	//	Start Processing the request.
@@ -74,15 +81,14 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 		if (Response.IsValid()) log2 = ", Response = true";
 		if (Response->GetContentLength() > 0) log3 = ", ResponseContent = true";
 		FString log = log1 + log2 + log3;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("REQUEST: ") + log);
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("REQUEST: ") + log);
 	}
 
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
 
 	// GetActualURL(); 
-	FString mURL = Request->GetURL();
-	
+	FString mURL = Request->GetURL();	
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
 
@@ -125,8 +131,8 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 		ScenePath = Path;
 		UBg2DownloadParser::SceneParser(Path, Result);
 		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Number of things to download " + FString::FromInt(Result.Num())));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("PATH: " + Path));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Number of things to download " + FString::FromInt(Result.Num())));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("PATH: " + Path));
 		}
 	}
 	else {
@@ -141,8 +147,9 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 	for (int32 i = 0; i < Result.Num(); ++i)
 	{
 		FString URL = GetBaseURL() + "/" + FGenericPlatformHttp::UrlEncode(*Result[i]);
-		if (GEngine)
+		/*if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ") + URL);
+		*/
 		UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
 		DownloadTask->Start(URL, [&]() {
 			mDownloadedResources++;
@@ -153,6 +160,7 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 	}
 	return true;
 }
+
 
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)
 {

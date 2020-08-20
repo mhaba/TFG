@@ -41,6 +41,7 @@ public:
 
 	FString GetActualURL();
 
+
 	UPROPERTY(BlueprintAssignable, Category = "Bg2Downloader")
 	FDownloadFinishedDelegate OnDownloadFinished;
 
