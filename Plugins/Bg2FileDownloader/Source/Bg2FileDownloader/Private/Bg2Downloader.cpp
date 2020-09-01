@@ -113,6 +113,7 @@ void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Res
 		if (fileHandler) {
 			//	Write the new file from the response
 			fileHandler->Write(Response->GetContent().GetData(), Response->GetContentLength());
+			fileHandler->Flush(true);
 			//	Close and finish rhe operation
 			delete fileHandler;
 		}
