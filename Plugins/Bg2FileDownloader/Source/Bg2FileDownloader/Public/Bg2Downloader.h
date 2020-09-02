@@ -7,7 +7,11 @@
 #include "UObject/NoExportTypes.h"
 #include "Interfaces/IHttpRequest.h"
 
+#include <functional>
+
 #include "Bg2Downloader.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDownloadFinishedDelegate);
 
 UCLASS(Blueprintable)
 class BG2FILEDOWNLOADER_API UBg2Downloader : public UObject
@@ -26,7 +30,7 @@ public:
 	* @return			Returns itself.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
-	static UBg2Downloader* Download(FString URL);
+	UBg2Downloader* Download(FString URL);
 
 	/** Checks if Android device is ready to work with */
 	/*UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
@@ -37,8 +41,15 @@ public:
 
 	FString GetActualURL();
 
+
+	UPROPERTY(BlueprintAssignable, Category = "Bg2Downloader")
+	FDownloadFinishedDelegate OnDownloadFinished;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Bg2Downloader")
+	FString ScenePath;
+
 private:
-	void Start(FString URL);
+	void Start(FString URL, std::function<void ()> onComplete);
 
 	/** Handles requests coming from the URL */
 	void HandleRequest(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
@@ -51,5 +62,11 @@ private:
 	void SetBaseURL(FString URL);
 
 	void SetActualURL(FString URL);
+
+	std::function<void ()> mOnComplete;
+
+	// They will only be used from the main download
+	int32 mNumResources;
+	int32 mDownloadedResources;
 
 };

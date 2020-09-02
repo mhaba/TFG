@@ -1,0 +1,5 @@
+{
+    "basePath": "ExampleScene",
+    "port": 8080,
+    "defaultSceneName": "ExampleScene.vitscnj"
+}

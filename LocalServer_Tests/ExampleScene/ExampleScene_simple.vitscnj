@@ -26,21 +26,21 @@
 						{
 							"type": "Transform",
 							"transformMatrix": [
-								0.7716243863105774,
+								-0.9238795042037964,
 								0,
-								-0.6360784769058228,
+								0.38268348574638367,
 								0,
-								-0.16462922096252441,
-								0.9659258127212524,
-								-0.19971108436584473,
+								0.06645228713750839,
+								0.9848077297210693,
+								0.16042999923229218,
 								0,
-								0.6144046187400818,
-								0.258819043636322,
-								0.745331883430481,
+								-0.37686964869499207,
+								0.1736481785774231,
+								-0.9098436832427979,
 								0,
-								2.9954960346221924,
-								1.9944931268692017,
-								3.974642515182495,
+								-5.653044700622559,
+								2.604722738265991,
+								-13.647655487060547,
 								1
 							]
 						},
@@ -62,14 +62,14 @@
 								"right": false
 							},
 							"rotation": [
-								15,
-								-1040.5
+								10,
+								-157.5
 							],
-							"distance": 5.0509719060853655,
+							"distance": 15,
 							"center": [
-								-0.10784456880445116,
-								0.6872054517917602,
-								0.2099921058712304
+								0,
+								0,
+								0
 							],
 							"rotationSpeed": 0.2,
 							"forward": 0,
@@ -128,21 +128,21 @@
 							"shadowStrength": 0.3,
 							"cutoffDistance": -1,
 							"projection": [
-								0.09899085015058517,
+								0.03333333507180214,
 								0,
 								0,
 								0,
 								0,
-								0.09899085015058517,
+								0.03333333507180214,
 								0,
 								0,
 								0,
 								0,
-								-0.001320749637670815,
+								-0.00044454322778619826,
 								0,
 								0,
 								0,
-								-1.001320719718933,
+								-1.0004445314407349,
 								1
 							],
 							"castShadows": true,
@@ -180,43 +180,6 @@
 				},
 				{
 					"type": "Node",
-					"name": "Ball",
-					"enabled": true,
-					"steady": false,
-					"children": [],
-					"components": [
-						{
-							"type": "Drawable",
-							"name": "564832a4-4905-4699-88fa-9d3b4886ed64"
-						},
-						{
-							"type": "Transform",
-							"transformMatrix": [
-								1,
-								0,
-								0,
-								0,
-								0,
-								1,
-								0,
-								0,
-								0,
-								0,
-								1,
-								0,
-								1.0858262777328491,
-								0.508816123008728,
-								0,
-								1
-							]
-						},
-						{
-							"type": "Selectable"
-						}
-					]
-				},
-				{
-					"type": "Node",
 					"name": "Floor",
 					"enabled": true,
 					"steady": false,
@@ -242,81 +205,7 @@
 								1,
 								0,
 								0,
-								0.020173978060483932,
-								0,
-								1
-							]
-						},
-						{
-							"type": "Selectable"
-						}
-					]
-				},
-				{
-					"type": "Node",
-					"name": "copy of Ball",
-					"enabled": true,
-					"steady": false,
-					"children": [],
-					"components": [
-						{
-							"type": "Drawable",
-							"name": "copy of 564832a4-4905-4699-88fa-9d3b4886ed64"
-						},
-						{
-							"type": "Transform",
-							"transformMatrix": [
-								1,
-								0,
-								0,
-								0,
-								0,
-								1,
-								0,
-								0,
-								0,
-								0,
-								1,
-								0,
-								0,
-								0.508816123008728,
-								0,
-								1
-							]
-						},
-						{
-							"type": "Selectable"
-						}
-					]
-				},
-				{
-					"type": "Node",
-					"name": "copy of copy of Ball",
-					"enabled": true,
-					"steady": false,
-					"children": [],
-					"components": [
-						{
-							"type": "Drawable",
-							"name": "copy of copy of 564832a4-4905-4699-88fa-9d3b4886ed64"
-						},
-						{
-							"type": "Transform",
-							"transformMatrix": [
-								1,
-								0,
-								0,
-								0,
-								0,
-								1,
-								0,
-								0,
-								0,
-								0,
-								1,
-								0,
-								-1.1138426065444946,
-								0.508816123008728,
+								-1,
 								0,
 								1
 							]
@@ -330,7 +219,7 @@
 			"components": [
 				{
 					"type": "Environment",
-					"equirectangularTexture": "interior_house.jpg",
+					"equirectangularTexture": "country_field_sun.jpg",
 					"irradianceIntensity": 1,
 					"showSkybox": true,
 					"cubemapSize": 512,
