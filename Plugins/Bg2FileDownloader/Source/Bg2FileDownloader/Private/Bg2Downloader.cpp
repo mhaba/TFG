@@ -26,18 +26,13 @@ TArray<FString> mResources;
 bool bIsReady = false;
 bool bSceneParsed = false;
 
-//UBg2DownloadParser* DownloadPars = NewObject<UBg2DownloadParser>();
-
 UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	Start(URL, [&]() {
-		// Se han descargado todos los recursos, lanzamos un evento para informar de que se ha terminado la descarga
+		// Se han descargado todos los recursos, lanzamos un evento
+		//para informar de que se ha terminado la descarga
 		this->OnDownloadFinished.Broadcast();
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Download completed"));
 	});
 
-
-	//	Maybe Start() should return a bool, so we could see if the funcition was
-	//	a success or a failure.
 	return this;
 }
 
@@ -45,16 +40,12 @@ void UBg2Downloader::Start(FString URL, std::function<void ()> onComplete) {
 	mOnComplete = onComplete;
 
 	SetActualURL(URL);
-
-	//	If these two URLs are equal then this is the scene's request.
-	//if (GetActualURL().Equals(GetBaseURL())) {
 	
 	const FRegexPattern containsFilePattern(TEXT(".*[^/]/{1}([a-zA-Z0-9\\-_\\%]+\\.[a-zA-Z0-9\\-_]+)$"));
 	FString ActualUrl = GetActualURL();
 	FRegexMatcher fileMatcher(containsFilePattern, ActualUrl);
 	
 	if (!fileMatcher.FindNext()) {
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, TEXT("EEEEEY"));
 		SetBaseURL(URL);
 		URL += mSceneName;
 		SetActualURL(URL);
