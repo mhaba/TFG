@@ -66,19 +66,9 @@ void UBg2Downloader::Start(FString URL, std::function<void ()> onComplete) {
 
 void UBg2Downloader::HandleRequest(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccess) {
 
-	if (GEngine) {
-		FString log1, log2, log3 = "";
-		if (bSuccess) log1 = "I'm in, but bSuccess = true";
-		if (Response.IsValid()) log2 = ", Response = true";
-		if (Response->GetContentLength() > 0) log3 = ", ResponseContent = true";
-		FString log = log1 + log2 + log3;
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("REQUEST: ") + log);
-	}
-
 	RemoveFromRoot();
 	Request->OnProcessRequestComplete().Unbind();
 
-	// GetActualURL(); 
 	FString mURL = Request->GetURL();	
 
 	if (bSuccess && Response.IsValid() && Response->GetContentLength() > 0) {
@@ -122,10 +112,6 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 		// End of main scene file download
 		ScenePath = Path;
 		UBg2DownloadParser::SceneParser(Path, Result);
-		if (GEngine) {
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Number of things to download " + FString::FromInt(Result.Num())));
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("PATH: " + Path));
-		}
 	}
 	else {
 		// End of resource file download
@@ -139,9 +125,7 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 	for (int32 i = 0; i < Result.Num(); ++i)
 	{
 		FString URL = GetBaseURL() + "/" + FGenericPlatformHttp::UrlEncode(*Result[i]);
-		/*if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("LOOP: ") + URL);
-		*/
+
 		UBg2Downloader* DownloadTask = NewObject<UBg2Downloader>();
 		DownloadTask->Start(URL, [&]() {
 			mDownloadedResources++;
@@ -156,7 +140,6 @@ bool UBg2Downloader::DoLoadResources(const FString& Path, TArray<FString>& Resul
 
 void UBg2Downloader::OnRequestProgress(FHttpRequestPtr HttpRequest, int32 BytesSent, int32 BytesRecieved)
 {
-	//	TODO:	USARLO EN UNA BARRA DE CARGA ?
 	int32 size = HttpRequest->GetContentLength();
 }
 
