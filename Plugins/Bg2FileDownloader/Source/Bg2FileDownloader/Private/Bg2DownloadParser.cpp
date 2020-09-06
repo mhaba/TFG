@@ -7,15 +7,6 @@
 #include "..\..\..\..\Bg2UnrealTools\Source\Bg2UnrealTools\Public\Bg2Model.h"
 #include "..\..\..\..\Bg2UnrealTools\Source\Bg2UnrealTools\Public\Bg2Material.h"
 
-
-/*bool UBg2DownloadParser::IndexParser(const FString& IndexPath, TArray<FString>& Result) {
-	bool bIsParsed = false;
-
-
-
-	return bIsParsed;
-}*/
-
 bool UBg2DownloadParser::SceneParser(const FString& ScenePath, TArray<FString>& Result) {
 	bool bIsParsed = false;
 
