@@ -78,7 +78,8 @@ module.exports = function(app, angularApp, bg, templatePath) {
                             }
 
                             let encoding = fileName == sceneName ? "utf8" : "";
-
+                            fileName = decodeURIComponent(fileName);
+                            filePath = decodeURIComponent(filePath);
 
                             try{
                                 fs.readFile(filePath, encoding, function(err, data){
