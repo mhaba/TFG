@@ -28,8 +28,8 @@ bool bSceneParsed = false;
 
 UBg2Downloader* UBg2Downloader::Download(FString URL) {
 	Start(URL, [&]() {
-		// Se han descargado todos los recursos, lanzamos un evento
-		//para informar de que se ha terminado la descarga
+		// All resources have been downloaded, emit an event
+		//to inform that the download has ended
 		this->OnDownloadFinished.Broadcast();
 	});
 

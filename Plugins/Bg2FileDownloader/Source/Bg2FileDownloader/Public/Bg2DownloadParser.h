@@ -17,7 +17,6 @@ class BG2FILEDOWNLOADER_API UBg2DownloadParser : public UObject
 	
 
 public:
-	/*bool IndexParser(const FString& IndexPath, TArray<FString>& Result);*/
 
 	static bool SceneParser(const FString& ScenePath, TArray<FString>& Result);
 

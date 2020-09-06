@@ -26,16 +26,10 @@ public:
 	* Downloads a file and saves it.
 	*
 	* @param URL		URL
-	* @param Bg2Thing	Object requested to download.
 	* @return			Returns itself.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
 	UBg2Downloader* Download(FString URL);
-
-	/** Checks if Android device is ready to work with */
-	/*UFUNCTION(BlueprintCallable, Category = "Bg2Downloader")
-	static bool CheckAndroidReadiness();
-	*/
 
 	FString GetBaseURL();
 
