@@ -1,0 +1,347 @@
+{
+	"fileType": "vwgl::scene",
+	"version": {
+		"major": 2,
+		"minor": 0,
+		"rev": 0
+	},
+	"scene": [
+		{
+			"type": "Node",
+			"name": "SceneRoot",
+			"enabled": true,
+			"steady": false,
+			"children": [
+				{
+					"type": "Node",
+					"name": "Main Camera",
+					"enabled": true,
+					"steady": false,
+					"children": [],
+					"components": [
+						{
+							"type": "Camera",
+							"isMain": true
+						},
+						{
+							"type": "Transform",
+							"transformMatrix": [
+								0.7716243863105774,
+								0,
+								-0.6360784769058228,
+								0,
+								-0.16462922096252441,
+								0.9659258127212524,
+								-0.19971108436584473,
+								0,
+								0.6144046187400818,
+								0.258819043636322,
+								0.745331883430481,
+								0,
+								2.9954960346221924,
+								1.9944931268692017,
+								3.974642515182495,
+								1
+							]
+						},
+						{
+							"type": "OrbitCameraController",
+							"rotateButtons": {
+								"left": true,
+								"middle": false,
+								"right": false
+							},
+							"panButtons": {
+								"left": false,
+								"middle": false,
+								"right": true
+							},
+							"zoomButtons": {
+								"left": false,
+								"middle": true,
+								"right": false
+							},
+							"rotation": [
+								15,
+								-1040.5
+							],
+							"distance": 5.0509719060853655,
+							"center": [
+								-0.10784456880445116,
+								0.6872054517917602,
+								0.2099921058712304
+							],
+							"rotationSpeed": 0.2,
+							"forward": 0,
+							"left": 0,
+							"wheelSpeed": 1,
+							"minFocus": 2,
+							"minPitch": -90,
+							"maxPitch": 90,
+							"minDistance": 0.4,
+							"maxDistance": 1.7976931348623157e+308,
+							"maxX": 1.7976931348623157e+308,
+							"minX": -1.7976931348623157e+308,
+							"minY": -1.7976931348623157e+308,
+							"maxY": 1.7976931348623157e+308,
+							"maxZ": 1.7976931348623157e+308,
+							"minZ": -1.7976931348623157e+308,
+							"displacementSpeed": 0.1,
+							"enabled": true
+						},
+						{
+							"type": "Selectable"
+						}
+					]
+				},
+				{
+					"type": "Node",
+					"name": "Main Light",
+					"enabled": true,
+					"steady": false,
+					"children": [],
+					"components": [
+						{
+							"type": "Light",
+							"lightType": "kTypeDirectional",
+							"ambient": [
+								0.2,
+								0.2,
+								0.2,
+								1
+							],
+							"diffuse": [
+								0.9,
+								0.9,
+								0.9,
+								1
+							],
+							"specular": [
+								1,
+								1,
+								1,
+								1
+							],
+							"intensity": 1,
+							"spotCutoff": 20,
+							"spotExponent": 30,
+							"shadowStrength": 0.3,
+							"cutoffDistance": -1,
+							"projection": [
+								0.09899085015058517,
+								0,
+								0,
+								0,
+								0,
+								0.09899085015058517,
+								0,
+								0,
+								0,
+								0,
+								-0.001320749637670815,
+								0,
+								0,
+								0,
+								-1.001320719718933,
+								1
+							],
+							"castShadows": true,
+							"shadowBias": 0.00002,
+							"specularType": "PHONG",
+							"constantAtt": 1,
+							"linearAtt": 0.5,
+							"expAtt": 0.1
+						},
+						{
+							"type": "Transform",
+							"transformMatrix": [
+								0.9659258127212524,
+								0,
+								-0.258819043636322,
+								0,
+								-0.2120121568441391,
+								0.5735764503479004,
+								-0.7912400960922241,
+								0,
+								0.1484525054693222,
+								0.8191520571708679,
+								0.5540323257446289,
+								0,
+								0.14854049682617188,
+								3.260463237762451,
+								5.554360866546631,
+								1
+							]
+						},
+						{
+							"type": "Selectable"
+						}
+					]
+				},
+				{
+					"type": "Node",
+					"name": "Ball",
+					"enabled": true,
+					"steady": false,
+					"children": [],
+					"components": [
+						{
+							"type": "Drawable",
+							"name": "564832a4-4905-4699-88fa-9d3b4886ed64"
+						},
+						{
+							"type": "Transform",
+							"transformMatrix": [
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								1.0858262777328491,
+								0.508816123008728,
+								0,
+								1
+							]
+						},
+						{
+							"type": "Selectable"
+						}
+					]
+				},
+				{
+					"type": "Node",
+					"name": "Floor",
+					"enabled": true,
+					"steady": false,
+					"children": [],
+					"components": [
+						{
+							"type": "Drawable",
+							"name": "Plane"
+						},
+						{
+							"type": "Transform",
+							"transformMatrix": [
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								0,
+								0.020173978060483932,
+								0,
+								1
+							]
+						},
+						{
+							"type": "Selectable"
+						}
+					]
+				},
+				{
+					"type": "Node",
+					"name": "copy of Ball",
+					"enabled": true,
+					"steady": false,
+					"children": [],
+					"components": [
+						{
+							"type": "Drawable",
+							"name": "copy of 564832a4-4905-4699-88fa-9d3b4886ed64"
+						},
+						{
+							"type": "Transform",
+							"transformMatrix": [
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								0,
+								0.508816123008728,
+								0,
+								1
+							]
+						},
+						{
+							"type": "Selectable"
+						}
+					]
+				},
+				{
+					"type": "Node",
+					"name": "copy of copy of Ball",
+					"enabled": true,
+					"steady": false,
+					"children": [],
+					"components": [
+						{
+							"type": "Drawable",
+							"name": "copy of copy of 564832a4-4905-4699-88fa-9d3b4886ed64"
+						},
+						{
+							"type": "Transform",
+							"transformMatrix": [
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								0,
+								0,
+								0,
+								1,
+								0,
+								-1.1138426065444946,
+								0.508816123008728,
+								0,
+								1
+							]
+						},
+						{
+							"type": "Selectable"
+						}
+					]
+				}
+			],
+			"components": [
+				{
+					"type": "Environment",
+					"equirectangularTexture": "interior_house.jpg",
+					"irradianceIntensity": 1,
+					"showSkybox": true,
+					"cubemapSize": 512,
+					"irradianceMapSize": 32,
+					"specularMapSize": 32,
+					"specularMapL2Size": 32
+				},
+				{
+					"type": "Selectable"
+				}
+			]
+		}
+	]
+}

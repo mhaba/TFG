@@ -1,0 +1,13 @@
+<div class="bg2-widget-panel">
+    <h3>Choose an address to use on the application</h3>
+    <div ng-repeat="(key,addresses) in networkData">
+        <h4>{{ key }} listening at port {{ port }} in the following addresses:</h4>
+        <ul>
+            <li ng-repeat="address in addresses">
+                {{ address }}
+            </li>
+        </ul>
+    </div>
+    <button ng-click="startServer()" ng-hide="isStarted">Start</button>
+    <button ng-click="stopServer()" ng-show="isStarted">Stop</button>
+</div>

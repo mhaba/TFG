@@ -1,0 +1,3 @@
+[submodule "Plugins/Bg2UnrealTools"]
+	path = Plugins/Bg2UnrealTools
+	url = https://github.com/ferserc1/bg2-unreal-tools.git
