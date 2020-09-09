@@ -49,10 +49,16 @@ module.exports = function(app, angularApp, bg, templatePath) {
 
         start() {
             return new Promise((resolve, reject) => {
-                // Borrar archivos del directorio temporal
-                fs.readdirSync(this.tempBasePath).forEach((resource) => {
-                    fs.unlink(path.join(this.tempBasePath,resource));
-                });
+                if(fs.existsSync(this.tempBasePath)){
+                    // Borrar archivos del directorio temporal
+                    fs.readdirSync(this.tempBasePath).forEach((resource) => {
+                        fs.unlink(path.join(this.tempBasePath,resource));
+                    });
+                }
+                else{
+                    // Crear directorio
+                    fs.mkdirSync(this.tempBasePath);
+                }                
 
                 // Guardar la escena en directorio temporal
                 app.render.Scene.Get().selectionManager.removeGizmos();
